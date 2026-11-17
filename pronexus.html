@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ProNexus · Ye Lin</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2316181D'/%3E%3Ccircle cx='32' cy='32' r='22' fill='%23F2C94C'/%3E%3Ctext x='32' y='44' text-anchor='middle' font-family='Georgia,serif' font-weight='700' font-size='34' fill='%2316181D'%3EY%3C/text%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Ye Lin · Backend &amp; data infrastructure">
+<meta property="og:description" content="Cornell CS student building the pipelines, databases, and APIs behind data and AI products.">
+<meta property="og:image" content="https://yl3794.github.io/yelin-dev/og-image.jpg">
+<meta property="og:url" content="https://yl3794.github.io/yelin-dev/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="description" content="Ye Lin's software engineering internship at ProNexus: matching 20,000+ applicants to 3,000+ roles.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<link rel="stylesheet" href="site.css">
+<style>
+
+.pick { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+.cols { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 18px; align-items: start; }
+.sl { font-size: 14px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: #8A6D12; margin-bottom: 8px; }
+.dots { display: grid; grid-template-columns: repeat(15, 1fr); gap: 5px; }
+.dots i { aspect-ratio: 1; border-radius: 50%; background: var(--muted); opacity: .35; transition: opacity .5s var(--ease), background .5s, transform .5s var(--ease); }
+.dots i.hit { background: var(--blue); opacity: 1; transform: scale(1.25); }
+.dots.dim i:not(.hit) { opacity: .1; }
+.cap { font-size: 16px; color: var(--muted); margin-top: 8px; }
+.ranks { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.ranks li { background: var(--paper); border-radius: 10px; padding: 10px 12px; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 10px; opacity: .35; transition: opacity .4s; }
+.ranks li.show { opacity: 1; }
+.ranks .role { font-weight: 600; }
+.ranks .sc { font-variant-numeric: tabular-nums; color: var(--muted); }
+.bar { grid-column: 1 / -1; height: 8px; background: var(--line); border-radius: 4px; overflow: hidden; }
+.bar span { display: block; height: 100%; width: 0; background: var(--sun-deep); border-radius: 4px; transition: width .8s var(--ease); }
+.legend { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 18px; font-size: 17px; min-height: 1.6em; margin-top: 4px; color: var(--muted); }
+.legend b { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--sun-deep); color: var(--ink); font-size: 14px; margin-right: 4px; }
+.legend span:first-child b { background: var(--blue); color: #fff; }
+.legend.show span { color: var(--ink); }
+.legend i { color: var(--muted); font-style: normal; font-variant-numeric: tabular-nums; }
+.norm { margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--line); }
+.normrow { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.raw, .canon { font-size: 16px; border-radius: 999px; padding: 1px 10px; }
+.raw { background: var(--paper); box-shadow: inset 0 0 0 1.5px var(--line); color: var(--muted); }
+.canon { background: var(--sun); font-weight: 600; transform: scale(.6); opacity: 0; transition: transform .45s var(--ease), opacity .45s; }
+.canon.show { transform: none; opacity: 1; }
+.arrow { color: var(--muted); }
+@media (max-width: 640px) { .cols { grid-template-columns: minmax(0, 1fr); } }
+
+</style>
+</head>
+<body>
+<header class="banner">
+  <div class="banner-img" aria-hidden="true"></div>
+  <div class="banner-inner">
+    <nav class="top" aria-label="Main">
+      <a class="me" href="index.html">Ye Lin</a>
+      <a href="index.html#work">Work</a>
+      <a href="index.html#projects">Projects</a>
+      <a href="index.html#life">Life</a>
+      <a href="index.html#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+<main>
+  <a class="back reveal" href="index.html#work">← Back to home</a>
+  <header class="head">
+    <div class="head-text">
+      <h1 class="reveal" style="--i:2"><a class="co-link" href="https://www.pronexus.ai/" target="_blank" rel="noopener" title="Visit www.pronexus.ai">ProNexus</a></h1>
+      <p class="lede summary reveal" style="--i:3">As a Software Engineer Intern at ProNexus, I built a two-stage pipeline that helps recruiters find the right candidates faster. It first uses FAISS to quickly pull the closest roles for each of 20,000+ applicants, then ranks them with XGBoost across 3,000+ open roles. I also used AI classification to translate skills into one shared vocabulary, so a résumé that says "ReactJS" matches a job that asks for "React." Finally, I made reprocessing a candidate 80% faster, from 15 seconds to 3, with incremental writes, automatic retries, and rate-limit handling.</p>
+      <ul class="tags reveal" style="--i:4" aria-label="Tools"><li>Python</li><li>FAISS</li><li>XGBoost</li><li>LLMs</li></ul>
+      
+    </div>
+  </header>
+  <section class="later">
+    <h2>Try it</h2>
+    <div class="demo">
+      <div class="demo-stage">
+        <div class="pick" role="group" aria-label="Example applicants" id="pick"></div>
+        <div class="stage3d" id="match3d" role="img" aria-label="A 3D view: an applicant card on the left, a sphere of job roles in the middle, and three ranked bars on the right where the best matches land."><span class="drag-hint" title="Drag to rotate" aria-hidden="true">⟲</span></div>
+        <p class="legend" id="legend"></p>
+        <div class="norm"><div class="normrow" id="norm"></div></div>
+      </div>
+      <div class="controls"><button class="btn" type="button" id="run">▶ Match</button><span class="readout" id="ro" hidden></span></div>
+      <p class="note">Example data</p>
+    </div>
+  </section>
+  <nav class="book" aria-label="More work" data-current="pronexus.html"></nav>
+</main>
+<footer class="foot"><a href="index.html">← Back to home</a><a href="#">Back to top ↑</a></footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="site.js"></script>
+<script src="book.js"></script>
+<script src="scene3d.js"></script>
+<script>
+(() => {
+  const people = [
+    { name: 'Applicant A', raw: ['python3', 'SQL queries', 'Tableau dashboards'], canon: ['Python', 'SQL', 'Data visualization'], roles: [['Data Analyst', .94], ['Analytics Engineer', .89], ['BI Developer', .83]], seed: 3 },
+    { name: 'Applicant B', raw: ['ReactJS', 'TS', 'node'], canon: ['React', 'TypeScript', 'Node.js'], roles: [['Frontend Engineer', .95], ['Full-stack Engineer', .91], ['Web Developer', .84]], seed: 7 },
+    { name: 'Applicant C', raw: ['pytorch', 'ML ops', 'docker'], canon: ['PyTorch', 'MLOps', 'Docker'], roles: [['ML Engineer', .93], ['ML Platform Engineer', .90], ['Data Scientist', .82]], seed: 11 },
+  ];
+  const pick = document.getElementById('pick'), norm = document.getElementById('norm'), ro = document.getElementById('ro'), legend = document.getElementById('legend');
+  const el = document.getElementById('match3d');
+  const M = window.Mini3D && Mini3D(el, { camZ: 12, camY: 2.2, fitWidth: 10, rotY: -0.25, rotX: 0.16 });
+  if (!M) return;
+  const { T, group, mat, edges, label, remove, face } = M;
+  const INK = 0x16181D, SUN = 0xF2C94C, BLUE = 0x1E4FD8, WHITE = 0xFFFFFF;
+
+  const cg = new T.BoxGeometry(1.0, 1.3, 0.08), card = new T.Mesh(cg, mat(WHITE)); card.add(edges(cg, INK, 0.7)); card.position.set(-4, 0, 0); group.add(card);
+  [0.35, 0.1, -0.12, -0.34].forEach((y, i) => { const b = new T.Mesh(new T.BoxGeometry(i ? 0.6 : 0.35, 0.07, 0.02), mat(i ? 0xD9DBD6 : SUN)); b.position.set(-4 - (i ? 0 : 0.18), y, 0.06); group.add(b); });
+
+  const cloud = new T.Group(); group.add(cloud);
+  const N = 120, roles = [];
+  for (let i = 0; i < N; i++) {
+    const y = 1 - (i / (N - 1)) * 2, r = Math.sqrt(1 - y * y), th = i * 2.399963;
+    const m = new T.Mesh(new T.SphereGeometry(0.1, 12, 12), mat(INK, { transparent: true, opacity: 0.55 }));
+    m.userData.base = new T.Vector3(Math.cos(th) * r, y, Math.sin(th) * r).multiplyScalar(1.6);
+    m.position.copy(m.userData.base); cloud.add(m); roles.push(m);
+  }
+  const BX = [2.9, 3.75, 4.6];
+  const bars = BX.map((x, i) => { const g = new T.BoxGeometry(0.6, 1, 0.6), b = new T.Mesh(g, mat(i ? SUN : BLUE)); b.add(edges(g, INK, 0.4)); b.position.set(x, -1.6, 0); b.scale.y = 0.05; group.add(b); const F = face(b, { y: 0.25, scale: 1.5 }); M.onFrame(() => { F.f.scale.y = 1 / Math.max(0.05, b.scale.y); }); return b; });
+  const base = new T.Mesh(new T.BoxGeometry(2.6, 0.08, 1.0), mat(0xE6E7EA)); base.position.set(3.75, -1.66, 0); group.add(base);
+  const beams = new T.Group(); group.add(beams);
+  [['Applicant', -4, -1.05], ['Roles', 0, -2.1], ['Top 3', 3.75, -2.05]].forEach(([n, x, y]) => { label(n, 'sm').pos.set(x, y, 0); });
+
+  let tweens = [], timers = [], podL = [], flown = [], cur = 0;
+  const ease = k => 1 - Math.pow(1 - k, 3);
+  function tween(dur, f) { tweens.push({ d: window.REDUCE ? 0.001 : dur, t: 0, f }); }
+  M.onFrame(dt => {
+    cloud.rotation.y += dt * 0.25;
+    tweens.forEach(w => { w.t = Math.min(w.d, w.t + dt); w.f(ease(w.t / w.d)); });
+    tweens = tweens.filter(w => w.t < w.d);
+    beams.children.forEach(l => { l.material.opacity *= 0.985; });
+  });
+
+  people.forEach((p, i) => {
+    const b = document.createElement('button');
+    b.className = 'chip'; b.type = 'button'; b.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true" style="width:16px;height:16px;vertical-align:-2px;margin-right:4px;fill:none;stroke:currentColor;stroke-width:2"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4.5-6 8-6s7 2 8 6"/></svg>' + p.name.slice(-1); b.setAttribute('aria-label', p.name); b.setAttribute('aria-pressed', i === 0);
+    b.addEventListener('click', () => { cur = i; [...pick.children].forEach((c, j) => c.setAttribute('aria-pressed', j === i)); reset(); });
+    pick.appendChild(b);
+  });
+  function reset() {
+    timers.forEach(clearTimeout); timers = []; tweens = [];
+    const p = people[cur];
+    norm.innerHTML = p.raw.map((r, i) => `<span class="raw">${r}</span><span class="arrow">→</span><span class="canon">${p.canon[i]}</span>`).join('');
+    flown.forEach(m => { cloud.attach(m); m.position.copy(m.userData.base); });
+    flown = [];
+    roles.forEach(m => { m.material.color.setHex(INK); m.material.opacity = 0.55; m.scale.setScalar(1); });
+    beams.clear(); podL.forEach(remove); podL = [];
+    bars.forEach(b => { b.scale.y = 0.05; b.position.y = -1.6; });
+    legend.classList.remove('show'); legend.innerHTML = '';
+    ro.textContent = p.raw.join(', ');
+  }
+  function rnd(s) { return () => (s = (s * 9301 + 49297) % 233280) / 233280; }
+  function run() {
+    reset();
+    const p = people[cur], r = rnd(p.seed), w = window.REDUCE ? 0 : 1;
+    [...norm.querySelectorAll('.canon')].forEach((c, i) => timers.push(setTimeout(() => c.classList.add('show'), w * (150 + i * 180))));
+    const picks = []; while (picks.length < 8) { const k = Math.floor(r() * N); if (!picks.includes(k)) picks.push(k); }
+    timers.push(setTimeout(() => {
+      roles.forEach((m, i) => { if (!picks.includes(i)) tween(0.6, k => { m.material.opacity = 0.55 - 0.47 * k; }); });
+      picks.forEach(i => {
+        const m = roles[i]; m.material.color.setHex(BLUE);
+        tween(0.5, k => { m.material.opacity = 0.55 + 0.45 * k; m.scale.setScalar(1 + 0.9 * k); });
+        const wp = new T.Vector3(); m.getWorldPosition(wp); group.worldToLocal(wp);
+        const l = new T.Line(new T.BufferGeometry().setFromPoints([card.position.clone(), wp]), new T.LineBasicMaterial({ color: BLUE, transparent: true, opacity: 0.7 }));
+        beams.add(l);
+      });
+    }, w * 800));
+    timers.push(setTimeout(() => {
+      picks.slice(0, 3).forEach((i, j) => {
+        const m = roles[i]; group.attach(m); flown.push(m);
+        const from = m.position.clone(), h = p.roles[j][1] * 2.2, to = new T.Vector3(BX[j], -1.6 + h + 0.25, 0);
+        tween(0.9, k => { m.position.lerpVectors(from, to, k).add(new T.Vector3(0, Math.sin(Math.PI * k) * 0.8, 0)); });
+        tween(0.9, k => { const s = 0.05 + (h - 0.05) * k; bars[j].scale.y = s; bars[j].position.y = -1.6 + s / 2; });
+        timers.push(setTimeout(() => { const L = label(p.roles[j][1].toFixed(2), j ? '' : 'big'); L.pos.copy(to).add(new T.Vector3(0, 0.42, 0)); podL.push(L); }, w * 900));
+      });
+      timers.push(setTimeout(() => { ro.innerHTML = 'Best match: <b>' + p.roles[0][0] + '</b>'; legend.innerHTML = p.roles.map((x, j) => `<span><b>${j + 1}</b> ${x[0]}</span>`).join(''); legend.classList.add('show'); }, w * 900));
+    }, w * 1700));
+  }
+  document.getElementById('run').addEventListener('click', run);
+  reset();
+})();
+
+</script>
+</body>
+</html>

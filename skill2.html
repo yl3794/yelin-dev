@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Skill2 · Ye Lin</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2316181D'/%3E%3Ccircle cx='32' cy='32' r='22' fill='%23F2C94C'/%3E%3Ctext x='32' y='44' text-anchor='middle' font-family='Georgia,serif' font-weight='700' font-size='34' fill='%2316181D'%3EY%3C/text%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Ye Lin · Backend &amp; data infrastructure">
+<meta property="og:description" content="Cornell CS student building the pipelines, databases, and APIs behind data and AI products.">
+<meta property="og:image" content="https://yl3794.github.io/yelin-dev/og-image.jpg">
+<meta property="og:url" content="https://yl3794.github.io/yelin-dev/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="description" content="Skill2, an AI movement coach from the Cornell AI Hackathon. Ye Lin led the backend.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<link rel="stylesheet" href="site.css">
+<style>
+
+.coach { display: grid; grid-template-columns: 230px minmax(0, 1fr); gap: 18px; align-items: center; }
+#fig { width: 100%; height: auto; display: block; background: var(--paper); border-radius: 12px; }
+.bubble { background: var(--paper); border-radius: 16px 16px 16px 4px; padding: 14px 16px; box-shadow: 0 6px 18px rgba(22,24,29,.08); display: flex; flex-direction: column; gap: 4px; transition: background .3s; }
+.bubble .who { font-size: 14px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: #8A6D12; }
+.bubble .msg { font-size: 22px; line-height: 1.35; font-weight: 600; }
+.bubble.warn { background: #FDECEA; }
+.bubble.good { background: #E8F5EC; }
+.sees { font-size: 16px; color: var(--muted); margin-top: 8px; font-variant-numeric: tabular-nums; }
+input[type=range] { width: 200px; accent-color: #C98A00; }
+.knee.bad { animation: pulse .9s ease-in-out infinite; }
+@keyframes pulse { 50% { r: 9; } }
+@media (max-width: 640px) { .coach { grid-template-columns: minmax(0, 1fr); } #fig { max-width: 260px; margin: 0 auto; } }
+
+</style>
+</head>
+<body>
+<header class="banner">
+  <div class="banner-img" aria-hidden="true"></div>
+  <div class="banner-inner">
+    <nav class="top" aria-label="Main">
+      <a class="me" href="index.html">Ye Lin</a>
+      <a href="index.html#work">Work</a>
+      <a href="index.html#projects">Projects</a>
+      <a href="index.html#life">Life</a>
+      <a href="index.html#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+<main>
+  <a class="back reveal" href="index.html#projects">← Back to home</a>
+  <header class="head">
+    <div class="head-text">
+      <h1 class="reveal" style="--i:2"><a class="co-link" href="https://github.com/yl3794/skill2-backend" target="_blank" rel="noopener" title="Backend code on GitHub">Skill2</a></h1>
+      <p class="lede summary reveal" style="--i:3">Skill2 is an AI movement coach my team built at the Cornell AI Hackathon. MediaPipe tracks your joints through a webcam, and Claude turns that movement data into simple advice about your form. I led backend development and integration: I built the FastAPI service that processes the pose data and sends feedback to our React app, and I agreed on the API details with our frontend teammates early so everything fit together at demo time.</p>
+      <ul class="tags reveal" style="--i:4" aria-label="Tools"><li>FastAPI</li><li>MediaPipe</li><li>Claude API</li><li>React</li></ul>
+    </div>
+  </header>
+  <section class="later">
+    <h2>Try a squat</h2>
+    <div class="demo">
+      <div class="stage3d" id="squat3d" role="img" aria-label="A 3D figure squats. Its joints are tracked in blue, and an AI coach bubble gives short feedback."><span class="drag-hint" title="Drag to rotate" aria-hidden="true">⟲</span><div class="bubble3" id="bub" aria-live="polite"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/></svg><span id="msg">…</span></div></div>
+      <div class="controls">
+        <input type="range" id="depth" min="0" max="100" value="0" aria-label="Squat depth">
+        <label class="toggle" for="cave"><input type="checkbox" id="cave"><span class="switch" aria-hidden="true"></span><span>Knees in</span></label>
+        <button class="btn ghost" type="button" id="auto">▶ Reps</button>
+      </div>
+    </div>
+  </section>
+  <figure class="photo later"><img src="ai-hackathon.jpg" alt="Ye and her teammates at the Cornell AI Hackathon"><figcaption>Our team</figcaption></figure>
+  <nav class="book" aria-label="More work" data-current="skill2.html"></nav>
+</main>
+<footer class="foot"><a href="index.html">← Back to home</a><a href="#">Back to top ↑</a></footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="site.js"></script>
+<script src="book.js"></script>
+<script src="scene3d.js"></script>
+<script>
+(() => {
+  const el = document.getElementById('squat3d');
+  const M = window.Mini3D && Mini3D(el, { camZ: 11, camY: 1.4, fitWidth: 5.6, rotY: -0.7, rotX: 0.12 });
+  if (!M) return;
+  const { T, group, mat, label, face, mood: setMood, edges } = M;
+  const INK = 0x16181D, SUN = 0xF2C94C, BLUE = 0x1E4FD8, REDC = 0xD23B2F;
+  const depth = document.getElementById('depth'), cave = document.getElementById('cave'), msg = document.getElementById('msg'), bub = document.getElementById('bub');
+  const floor = new T.Mesh(new T.CircleGeometry(2, 48), mat(SUN, { transparent: true, opacity: 0.35 })); floor.rotation.x = -Math.PI / 2; floor.position.y = -2.05; group.add(floor);
+  const jm = mat(BLUE), lm = mat(INK), up = new T.Vector3(0, 1, 0);
+  const J = {};
+  ['aL', 'aR', 'kL', 'kR', 'hL', 'hR', 'sh', 'hand'].forEach(n => { const s = new T.Mesh(new T.SphereGeometry(0.12, 16, 16), n[0] === 'k' ? mat(BLUE) : jm); group.add(s); J[n] = s; });
+  const head = new T.Mesh(new T.SphereGeometry(0.34, 24, 24), mat(SUN)); head.add(edges(head.geometry)); group.add(head); const headFace = face(head, { scale: 1.3 });
+  const bones = [['aL', 'kL'], ['kL', 'hL'], ['aR', 'kR'], ['kR', 'hR'], ['hL', 'hR'], ['sh', 'hand']].map(([a, b]) => { const c = new T.Mesh(new T.CylinderGeometry(0.065, 0.065, 1, 12), lm); group.add(c); return [a, b, c]; });
+  const spine = new T.Mesh(new T.CylinderGeometry(0.07, 0.07, 1, 12), lm); group.add(spine);
+  const angL = label('', 'sm');
+  label('Tracked joints', 'sm').pos.set(0.2, -2.4, 0);
+  let auto = null;
+  function pose(d, caving) {
+    const rad = x => x * Math.PI / 180, s = rad(4 + d * 32), th = rad(6 + d * 80), u = rad(6 + d * 36);
+    const P = {};
+    [['L', 0.35], ['R', -0.35]].forEach(([side, z]) => {
+      const A = new T.Vector3(0.2, -2, z);
+      const kz = caving ? z * (1 - d * 0.9) : z * (1 + d * 0.25);
+      const K = new T.Vector3(A.x + 1.2 * Math.sin(s), A.y + 1.2 * Math.cos(s), kz);
+      const H = new T.Vector3(K.x - 1.25 * Math.sin(th), K.y + 1.25 * Math.cos(th), z * 0.8);
+      P['a' + side] = A; P['k' + side] = K; P['h' + side] = H;
+    });
+    const hip = P.hL.clone().add(P.hR).multiplyScalar(0.5);
+    P.sh = hip.clone().add(new T.Vector3(1.45 * Math.sin(u), 1.45 * Math.cos(u), 0));
+    P.hand = P.sh.clone().add(new T.Vector3(1.0, -0.2 + d * 0.25, 0));
+    Object.keys(J).forEach(n => J[n].position.copy(P[n]));
+    head.position.copy(P.sh.clone().add(new T.Vector3(0.45 * Math.sin(u), 0.45 * Math.cos(u), 0)));
+    const place = (c, a, b) => { const dir = b.clone().sub(a), len = dir.length(); c.position.copy(a.clone().add(b).multiplyScalar(0.5)); c.scale.set(1, len, 1); c.quaternion.setFromUnitVectors(up, dir.normalize()); };
+    bones.forEach(([a, b, c]) => place(c, P[a], P[b])); place(spine, hip, P.sh);
+    J.kL.material.color.setHex(caving ? REDC : BLUE); J.kR.material.color.setHex(caving ? REDC : BLUE);
+    const v1 = P.aL.clone().sub(P.kL), v2 = P.hL.clone().sub(P.kL), knee = Math.round(v1.angleTo(v2) * 180 / Math.PI);
+    angL.el.textContent = knee + '°'; angL.pos.copy(P.kL).add(new T.Vector3(0.45, 0.25, 0.4));
+    setMood(headFace, !!caving);
+    let m, mood = '';
+    if (caving) { m = 'Knees out!'; mood = 'warn'; }
+    else if (d < 0.1) m = '…';
+    else if (d < 0.45) m = 'Lower';
+    else if (d < 0.8) { m = 'Good depth'; mood = 'good'; }
+    else { m = 'Great!'; mood = 'good'; }
+    msg.textContent = m; bub.className = 'bubble3 ' + mood;
+  }
+  M.onFrame(dt => {
+    if (auto) {
+      auto.t += dt / (window.REDUCE ? 0.01 : 5.4);
+      depth.value = Math.round(Math.pow(Math.sin(Math.min(1, auto.t) * Math.PI * 3), 2) * 90);
+      if (auto.t >= 1) { auto = null; depth.value = 0; }
+    }
+    pose(depth.value / 100, cave.checked);
+  });
+  document.getElementById('auto').addEventListener('click', () => { auto = { t: 0 }; });
+})();
+
+</script>
+</body>
+</html>

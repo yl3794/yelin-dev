@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Enhansys · Ye Lin</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2316181D'/%3E%3Ccircle cx='32' cy='32' r='22' fill='%23F2C94C'/%3E%3Ctext x='32' y='44' text-anchor='middle' font-family='Georgia,serif' font-weight='700' font-size='34' fill='%2316181D'%3EY%3C/text%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Ye Lin · Backend &amp; data infrastructure">
+<meta property="og:description" content="Cornell CS student building the pipelines, databases, and APIs behind data and AI products.">
+<meta property="og:image" content="https://yl3794.github.io/yelin-dev/og-image.jpg">
+<meta property="og:url" content="https://yl3794.github.io/yelin-dev/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="description" content="Ye Lin's backend internship at Enhansys: 1.27M+ market records loaded in under an hour.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<link rel="stylesheet" href="site.css">
+<style>
+
+.demo canvas { display: block; width: 100%; height: 240px; }
+.say { padding: 0 18px 4px; font-size: 18px; min-height: 3.2em; }
+
+</style>
+</head>
+<body>
+<header class="banner">
+  <div class="banner-img" aria-hidden="true"></div>
+  <div class="banner-inner">
+    <nav class="top" aria-label="Main">
+      <a class="me" href="index.html">Ye Lin</a>
+      <a href="index.html#work">Work</a>
+      <a href="index.html#projects">Projects</a>
+      <a href="index.html#life">Life</a>
+      <a href="index.html#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+<main>
+  <a class="back reveal" href="index.html#work">← Back to home</a>
+  <header class="head">
+    <div class="head-text">
+      <h1 class="reveal" style="--i:2"><a class="co-link" href="https://enhansys.ai/" target="_blank" rel="noopener" title="Visit enhansys.ai">Enhansys</a></h1>
+      <p class="lede summary reveal" style="--i:3">As a Backend Developer Intern at Enhansys, an energy storage startup, I built the pipeline that brings years of Italian electricity market data into one database. Using parallel requests and Docker workers, it loaded more than 1.27 million historical records in under an hour. I replaced manual scripts with Apache Airflow, which runs all 23 data sources on schedule and retries automatically when a source fails, and I made every write safe to repeat so retries never create duplicates. I also standardized the data cleaning with dbt, cutting manual fix-up work by 56%.</p>
+      <ul class="tags reveal" style="--i:4" aria-label="Tools"><li>Python</li><li>Airflow</li><li>Docker</li><li>TimescaleDB</li><li>dbt</li></ul>
+      
+    </div>
+  </header>
+  <section class="later">
+    <h2>Try breaking it</h2>
+    <div class="demo">
+      <div class="stage3d" id="pipe3d" role="img" aria-label="A 3D pipeline: records travel from three sources through an ingest step into a database. A button makes one request time out so you can watch it retry."><span class="drag-hint" title="Drag to rotate" aria-hidden="true">⟲</span></div>
+      <p class="say" id="say" aria-live="polite" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)"></p>
+      <div class="controls">
+        <button class="btn" id="breakBtn" type="button">⚡ Break it</button>
+        <label class="toggle" for="idem"><input type="checkbox" id="idem" checked><span class="switch" aria-hidden="true"></span><span>Safe retries</span></label>
+        <span class="readout"><span>saved <b id="nStored">0</b></span><span>retries <b id="nRetry">0</b></span><span>dupes <b id="nDup" style="color:var(--red)">0</b></span></span>
+      </div>
+      <p class="note">Example data</p>
+    </div>
+  </section>
+  <nav class="book" aria-label="More work" data-current="enhansys.html"></nav>
+</main>
+<footer class="foot"><a href="index.html">← Back to home</a><a href="#">Back to top ↑</a></footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="site.js"></script>
+<script src="book.js"></script>
+<script src="scene3d.js"></script>
+<script>
+(() => {
+  const el = document.getElementById('pipe3d');
+  const M = window.Mini3D && Mini3D(el, { camZ: 12, camY: 2.4, fitWidth: 9.2, rotY: -0.3, rotX: 0.2 });
+  if (!M) return;
+  const { T, group, mat, edges, label, remove, face, mood } = M;
+  const idem = document.getElementById('idem'), say = document.getElementById('say');
+  const out = { s: document.getElementById('nStored'), r: document.getElementById('nRetry'), d: document.getElementById('nDup') };
+  const INK = 0x16181D, SUN = 0xF2C94C, BLUE = 0x1E4FD8, AMBER = 0xC98A00, RED = 0xD23B2F, GREEN = 0x1F8A4C, WHITE = 0xFFFFFF;
+  const SRC = [1.4, 0, -1.4].map(y => new T.Vector3(-3.8, y, 0)), ING = new T.Vector3(0, 0, 0), DB = new T.Vector3(3.6, 0, 0);
+
+  SRC.forEach((p, i) => {
+    const g = new T.BoxGeometry(1.0, 0.55, 0.55), m = new T.Mesh(g, mat(WHITE)); m.position.copy(p); m.add(edges(g)); group.add(m); face(m, { scale: 1.8 });
+    const pts = []; for (let k = 0; k <= 24; k++) { const t = k / 24; pts.push(p.clone().lerp(ING, t).add(new T.Vector3(0, Math.sin(Math.PI * t) * 0.35, 0))); }
+    const line = new T.Line(new T.BufferGeometry().setFromPoints(pts), new T.LineDashedMaterial({ color: INK, dashSize: 0.12, gapSize: 0.14, transparent: true, opacity: 0.35 }));
+    line.computeLineDistances(); group.add(line);
+  });
+  const ig = new T.BoxGeometry(1.3, 0.85, 0.85), ingest = new T.Mesh(ig, mat(SUN)); ingest.add(edges(ig)); group.add(ingest); const ingFace = face(ingest, { scale: 1.1 });
+  {
+    const pts = []; for (let k = 0; k <= 24; k++) { const t = k / 24; pts.push(ING.clone().lerp(DB, t).add(new T.Vector3(0, Math.sin(Math.PI * t) * 0.35, 0))); }
+    const line = new T.Line(new T.BufferGeometry().setFromPoints(pts), new T.LineDashedMaterial({ color: INK, dashSize: 0.12, gapSize: 0.14, transparent: true, opacity: 0.35 }));
+    line.computeLineDistances(); group.add(line);
+  }
+  let dbFace;
+  [-0.42, 0, 0.42].forEach(y => { const g = new T.CylinderGeometry(0.8, 0.8, 0.36, 40), m = new T.Mesh(g, mat(WHITE)); m.position.set(DB.x, y, 0); m.add(edges(g)); group.add(m); if (!y) dbFace = face(m, { scale: 2.6 }); });
+  M.onFrame(() => { mood(ingFace, ring.visible); mood(dbFace, pile.length > 0); });
+  const band = new T.Mesh(new T.CylinderGeometry(0.82, 0.82, 0.06, 40), mat(SUN)); band.position.set(DB.x, 0.62, 0); group.add(band);
+  [['Sources', -3.8, -1.95], ['Ingest', 0, -0.8], ['Database', 3.6, -0.95]].forEach(([n, x, y]) => { label(n, 'sm').pos.set(x, y, 0); });
+  const ring = new T.Mesh(new T.TorusGeometry(0.75, 0.05, 10, 60), mat(RED)); ring.position.copy(ING); ring.visible = false; group.add(ring);
+  const okRing = new T.Mesh(new T.TorusGeometry(1.0, 0.04, 10, 60), mat(GREEN, { transparent: true, opacity: 0 })); okRing.rotation.x = Math.PI / 2; okRing.position.set(DB.x, 0.62, 0); group.add(okRing);
+  const pile = [];
+
+  let stored = 0, retries = 0, dups = 0, nextId = 1, breakNext = false, parts = [], flashes = [], okPulse = 0;
+  const seen = new Set();
+  function flash(text, cls, pos) { const L = label(text, 'flash ' + cls); L.pos.copy(pos); flashes.push({ L, life: 1 }); }
+  function spawn(t0 = 0) {
+    const mesh = new T.Mesh(new T.SphereGeometry(0.12, 14, 14), mat(BLUE)); group.add(mesh);
+    const p = { id: nextId++, src: Math.floor(Math.random() * 3), seg: 0, t: t0, kind: 'ok', wait: 0, mesh, tag: null };
+    if (breakNext) { p.kind = 'fail'; breakNext = false; p.tag = label('#' + p.id, 'flash'); }
+    parts.push(p);
+  }
+  function arrive(p) {
+    if (p.kind === 'retry') {
+      if (idem.checked && seen.has(p.id)) { okPulse = 1; flash('✓ skipped', 'green', DB.clone().add(new T.Vector3(0, 1.3, 0))); say.textContent = 'Retry skipped, already saved.'; }
+      else {
+        stored++; dups++;
+        if (pile.length < 6) { const g = new T.BoxGeometry(0.32, 0.22, 0.32), b = new T.Mesh(g, mat(RED)); b.add(edges(g)); b.position.set(DB.x + (pile.length % 2 ? 0.2 : -0.2), 0.8 + pile.length * 0.24, 0); group.add(b); pile.push(b); }
+        flash('duplicate', 'red', DB.clone().add(new T.Vector3(0, 1.4 + pile.length * 0.24, 0)));
+        say.textContent = 'Duplicate saved.';
+      }
+      return false;
+    }
+    stored++; seen.add(p.id);
+    if (p.kind === 'fail') { p.seg = 2; p.t = 0; p.wait = 1; flash('timeout', 'red', ING.clone().add(new T.Vector3(0, 1.35, 0))); say.textContent = 'Timeout. Retrying.'; return true; }
+    return false;
+  }
+  function pos(p) {
+    if (p.seg === 2) return ING;
+    const a = p.seg === 0 ? SRC[p.src] : ING, b = p.seg === 0 ? ING : DB, t = p.t;
+    const e = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+    return a.clone().lerp(b, e).add(new T.Vector3(0, Math.sin(Math.PI * e) * 0.35, 0));
+  }
+  let acc = 0;
+  M.onFrame(dt => {
+    acc += dt; if (acc > (window.REDUCE ? 1.4 : 0.55)) { acc = 0; spawn(); }
+    const sp = window.REDUCE ? 0.35 : 0.6;
+    ring.visible = false;
+    for (const p of parts) {
+      if (p.seg === 2) {
+        p.wait -= dt; ring.visible = true; ring.scale.setScalar(0.4 + p.wait * 0.6); ring.rotation.z += dt * 4;
+        if (p.wait <= 0) { p.seg = 1; p.t = 0; p.kind = 'retry'; retries++; p.mesh.material.color.setHex(AMBER); p.tag.el.className = 'l3 flash amber'; }
+        continue;
+      }
+      p.t += dt * sp;
+      if (p.t >= 1) { if (p.seg === 0) { p.seg = 1; p.t = 0; } else p.done = !arrive(p); }
+      if (p.kind === 'fail' && p.seg === 1 && p.t > 0) p.mesh.material.color.setHex(BLUE);
+    }
+    parts.forEach(p => {
+      if (p.done) { group.remove(p.mesh); if (p.tag) remove(p.tag); return; }
+      const q = pos(p); p.mesh.position.copy(q);
+      if (p.seg === 2) p.mesh.material.color.setHex(RED);
+      if (p.tag) p.tag.pos.copy(q).add(new T.Vector3(0, 0.38, 0));
+    });
+    parts = parts.filter(p => !p.done);
+    flashes.forEach(f => { f.life -= dt * 0.55; f.L.pos.y += dt * 0.35; f.L.el.style.opacity = Math.max(0, Math.min(1, f.life * 2)); if (f.life <= 0) remove(f.L); });
+    flashes = flashes.filter(f => f.life > 0);
+    okPulse *= 0.95; okRing.material.opacity = okPulse; okRing.scale.setScalar(1 + (1 - okPulse) * 0.5);
+    out.s.textContent = stored; out.r.textContent = retries; out.d.textContent = dups;
+  });
+  document.getElementById('breakBtn').addEventListener('click', () => { breakNext = true; say.textContent = 'Next record will time out.'; });
+  idem.addEventListener('change', () => {
+    say.textContent = idem.checked ? 'Safe retries on.' : 'Safe retries off.';
+    if (idem.checked) { pile.forEach(b => group.remove(b)); pile.length = 0; }
+  });
+  for (let i = 0; i < 6; i++) spawn(i / 6);
+  parts.forEach((p, i) => { if (i % 2) p.seg = 1; });
+})();
+
+</script>
+</body>
+</html>

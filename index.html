@@ -1,0 +1,696 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Ye Lin, Cornell CS student building the pipelines, databases, and APIs behind data and AI products.">
+<title>Ye Lin</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2316181D'/%3E%3Ccircle cx='32' cy='32' r='22' fill='%23F2C94C'/%3E%3Ctext x='32' y='44' text-anchor='middle' font-family='Georgia,serif' font-weight='700' font-size='34' fill='%2316181D'%3EY%3C/text%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Ye Lin · Backend &amp; data infrastructure">
+<meta property="og:description" content="Cornell CS student building the pipelines, databases, and APIs behind data and AI products.">
+<meta property="og:image" content="https://yl3794.github.io/yelin-dev/og-image.jpg">
+<meta property="og:url" content="https://yl3794.github.io/yelin-dev/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<style>
+/* Layout: one white column that reads like a note; portrait intro, a work timeline, project cards with small live drawings, photos */
+:root {
+  --paper: #FFFFFF;
+  --ink: #16181D;
+  --muted: #6B7079;
+  --line: #E6E7EA;
+  --sun: #FFF1C4;
+  --sun-deep: #F2C94C;
+  --accent: #1E4FD8;
+  --serif: "Crimson Pro", Georgia, "Times New Roman", serif;
+  --ease: cubic-bezier(.22, .61, .36, 1);
+  color-scheme: light;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 20px;
+  line-height: 1.55;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  overflow-x: hidden;
+}
+/* One spacing rhythm: 112px between sections, 32px between blocks inside a section, 28px under headings */
+/* Breakout layout: visuals use the full 960px, paragraphs stay at a comfortable ~720px */
+main { --sec: 112px; --blk: 32px; --measure: 100%; max-width: 960px; margin: 0 auto; padding-block: 0 96px; display: flex; flex-direction: column; gap: var(--sec); }
+a { color: inherit; text-decoration: none; }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+h1, h2, h3 { margin: 0; font-weight: 600; text-wrap: balance; }
+h1 { font-size: clamp(52px, 10vw, 84px); line-height: .98; letter-spacing: -0.02em; }
+h2 { font-size: 38px; line-height: 1.1; letter-spacing: -0.01em; margin-bottom: 28px; width: fit-content; max-width: 100%; }
+h2::after { content: ""; display: block; width: 100%; height: 10px; margin-top: 8px; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 10'%3E%3Cpath d='M0 5 Q 7 1 14 5 T 28 5' fill='none' stroke='%23F2C94C' stroke-width='3'/%3E%3C/svg%3E") repeat-x left center / 28px 10px; border-radius: 4px; transform-origin: left; transition: transform .8s var(--ease) .15s; }
+.later:not(.in) h2::after { transform: scaleX(.15); }
+h2:hover::after { animation: squiggle .6s var(--ease); }
+@keyframes squiggle { 50% { transform: scaleX(1.04) translateY(-1px); } }
+p { margin: 0; }
+
+/* Load and scroll entrances: content is always visible, it only settles into place */
+@keyframes rise { from { opacity: .3; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+.reveal { animation: rise .7s var(--ease) both; animation-delay: calc(var(--i, 0) * 80ms); }
+.later { opacity: .35; transform: translateY(18px); transition: opacity .7s var(--ease), transform .7s var(--ease); transition-delay: calc(var(--d, 0) * 90ms); }
+.later.in { opacity: 1; transform: none; }
+
+/* Banner: stage curtains with a slow settle on load and a light parallax on scroll */
+.banner { position: relative; height: 300px; overflow: hidden; margin-left: calc(-1 * max(16px, env(safe-area-inset-left, 0px))); margin-right: calc(-1 * max(16px, env(safe-area-inset-right, 0px))); background: #E8916A; }
+.banner-img { position: absolute; inset: -30px 0 -30px; background: url("banner-sunset.jpg") 65% 35% / cover no-repeat; animation: settle 1.6s var(--ease) both; will-change: transform; }
+@keyframes settle { from { scale: 1.08; } to { scale: 1; } }
+.banner::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(22, 24, 29, .45), rgba(22, 24, 29, 0) 35%, rgba(255, 255, 255, 0) 78%, var(--paper) 100%); pointer-events: none; }
+.banner-inner { position: relative; z-index: 2; max-width: 960px; margin: 0 auto; padding-top: 22px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+
+nav { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 22px; font-size: 18px; color: rgba(255, 255, 255, .88); text-shadow: 0 1px 6px rgba(22, 24, 29, .35); }
+nav .me { color: #FFFFFF; font-weight: 600; font-size: 21px; margin-right: auto; }
+nav a:not(.me) { position: relative; }
+nav a:not(.me)::after { content: ""; position: absolute; left: 0; right: 0; bottom: 1px; height: 2px; background: var(--sun-deep); transform: scaleX(0); transform-origin: left; transition: transform .25s var(--ease); }
+nav a:hover, nav a.on { color: #FFFFFF; }
+nav a:hover::after, nav a.on::after { transform: scaleX(1); }
+
+/* Hero */
+.hero { position: relative; z-index: 3; margin-top: -110px; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: start; gap: 16px 32px; }
+.hero-text { display: flex; flex-direction: column; gap: 14px; min-width: 0; padding-top: 128px; }
+.hero p { color: var(--muted); font-size: 22px; line-height: 1.5; max-width: 26em; }
+.name { position: relative; white-space: nowrap; }
+.name svg { position: absolute; left: -4%; bottom: -0.16em; width: 108%; height: .32em; overflow: visible; }
+.name path { fill: none; stroke: var(--sun-deep); stroke-width: 7; stroke-linecap: round; stroke-dasharray: 160; stroke-dashoffset: 0; animation: draw 1s .45s var(--ease) backwards; }
+@keyframes draw { from { stroke-dashoffset: 160; } }
+
+.rotator { display: inline-grid; vertical-align: bottom; overflow: hidden; color: var(--ink); font-weight: 600; }
+.rotator span { grid-area: 1 / 1; transition: transform .55s var(--ease), opacity .55s var(--ease); white-space: nowrap; }
+.rotator span:not(.cur) { transform: translateY(100%); opacity: 0; }
+.rotator span.out { transform: translateY(-100%); opacity: 0; }
+
+.me-photo { position: relative; width: 190px; aspect-ratio: 1; border: 0; padding: 0; background: none; cursor: pointer; justify-self: end; }
+.me-photo::before { content: ""; position: absolute; inset: 0; border-radius: 50%; background: var(--sun); transform: translate(10px, 10px); transition: transform .4s var(--ease); }
+.me-photo img { position: relative; display: block; width: 100%; height: 100%; object-fit: cover; border-radius: 50%; border: 6px solid var(--paper); box-shadow: 0 1px 2px rgba(22, 24, 29, .10), 0 10px 24px rgba(22, 24, 29, .10); transform: rotate(-3deg); transition: transform .4s var(--ease); }
+.me-photo:hover img { transform: rotate(0deg) translate(-3px, -3px); }
+.me-photo:hover::before { transform: translate(14px, 14px); }
+.me-photo.wiggle img { animation: nod .6s var(--ease); }
+@keyframes nod { 30% { transform: rotate(-9deg) scale(1.04); } 65% { transform: rotate(5deg) scale(1.04); } }
+.bubble { position: absolute; bottom: 22px; left: -86px; z-index: 2; background: var(--paper); color: var(--ink); line-height: 1.2; border: 2px solid var(--ink); border-radius: 18px 18px 4px 18px; padding: 4px 16px 6px; font-size: 22px; font-weight: 600; font-style: italic; box-shadow: 4px 5px 0 var(--sun-deep); opacity: 0; transform: translateY(10px) scale(.8); transform-origin: 100% 100%; transition: opacity .2s, transform .25s var(--ease); pointer-events: none; white-space: nowrap; }
+.me-photo.wiggle .bubble { opacity: 1; transform: none; }
+
+/* Prose with linked places */
+.prose { font-size: 22px; line-height: 1.6; max-width: var(--measure); display: flex; flex-direction: column; gap: 14px; }
+.prose a { font-weight: 600; background-image: linear-gradient(var(--sun), var(--sun)); background-size: 100% 38%; background-position: 0 88%; background-repeat: no-repeat; transition: background-size .3s var(--ease); padding-inline: 1px; }
+.prose a:hover { background-size: 100% 100%; }
+/* links that should not be highlighted: plain text with a quiet underline on hover */
+.prose a.plain { font-weight: inherit; background: none; padding: 0; text-decoration: underline; text-decoration-color: transparent; text-underline-offset: 4px; transition: text-decoration-color .3s var(--ease); }
+.prose a.plain:hover { text-decoration-color: var(--sun-deep); }
+/* Elevator pitch: a little retro TV with static that switches on when tapped */
+.pitch { display: grid; grid-template-columns: 300px minmax(0, 1fr); align-items: center; gap: 16px 40px; margin-top: calc(var(--blk) - var(--sec) + 24px); }
+.tv { position: relative; width: 100%; padding: 40px 0 10px; border: 0; background: none; cursor: pointer; font: inherit; color: inherit; text-align: left; }
+.tv .ant { position: absolute; top: 0; left: 50%; width: 70px; height: 34px; transform: translateX(-50%); transform-origin: 50% 100%; }
+.tv .ant::before, .tv .ant::after { content: ""; position: absolute; bottom: 0; left: 50%; width: 3px; height: 40px; background: var(--ink); border-radius: 2px; transform-origin: 50% 100%; }
+.tv .ant::before { transform: rotate(-32deg); } .tv .ant::after { transform: rotate(28deg); }
+.tv .ant i { position: absolute; bottom: -4px; left: 50%; width: 18px; height: 9px; transform: translateX(-50%); background: var(--ink); border-radius: 10px 10px 0 0; }
+
+@keyframes wiggle { from { transform: translateX(-50%) rotate(-7deg); } to { transform: translateX(-50%) rotate(7deg); } }
+.tv .body { position: relative; display: grid; grid-template-columns: 1fr 44px; gap: 12px; padding: 14px; border-radius: 20px; background: #16181D; box-shadow: inset 0 -6px 0 rgba(255, 255, 255, .06), 0 18px 30px -16px rgba(22, 24, 29, .45); transition: transform .35s var(--ease); }
+.tv:hover .body { transform: translateY(-2px); }
+.tv .screen { position: relative; aspect-ratio: 4 / 3; border-radius: 16px / 22px; overflow: hidden; background: #1B1D22; box-shadow: inset 0 0 0 4px #2B2F38, inset 0 0 24px rgba(0, 0, 0, .7); }
+.tv canvas { position: absolute; inset: 0; width: 100%; height: 100%; image-rendering: pixelated; opacity: .55; }
+.tv .screen::after { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 4; background: repeating-linear-gradient(to bottom, rgba(0, 0, 0, .14) 0 2px, transparent 2px 4px), radial-gradient(ellipse at 30% 20%, rgba(255, 255, 255, .16), transparent 55%); }
+.tv .play { position: absolute; left: 50%; top: 50%; width: 54px; height: 54px; margin: -27px 0 0 -27px; border-radius: 50%; background: var(--sun); display: grid; place-items: center; box-shadow: 0 0 0 6px rgba(255, 241, 196, .25); transition: transform .3s var(--ease); z-index: 2; }
+.tv .play::after { content: ""; margin-left: 4px; border-style: solid; border-width: 10px 0 10px 16px; border-color: transparent transparent transparent var(--ink); }
+.tv:hover .play { transform: scale(1.12); }
+.tv .on { position: absolute; inset: 0; display: grid; place-items: center; background: var(--sun); opacity: 0; z-index: 3; }
+.tv .on img { width: 46%; aspect-ratio: 1; object-fit: cover; border-radius: 50%; border: 4px solid #fff; }
+.tv .on span { position: absolute; top: 10%; right: 8%; background: #fff; border-radius: 12px; padding: 2px 10px; font-size: 16px; font-weight: 600; box-shadow: 0 4px 10px rgba(22, 24, 29, .12); }
+.tv.is-on .on { animation: crt .6s cubic-bezier(.2, .8, .2, 1) forwards; }
+@keyframes crt { 0% { opacity: 1; transform: scale(1, .006); filter: brightness(4); } 45% { transform: scale(1, .006); } 100% { opacity: 1; transform: none; filter: none; } }
+.tv .side { display: flex; flex-direction: column; align-items: center; gap: 10px; padding-top: 6px; }
+.tv .knob { width: 30px; height: 30px; border-radius: 50%; background: var(--sun-deep); position: relative; transition: transform .8s var(--ease); }
+.tv .knob::after { content: ""; position: absolute; top: 3px; left: 50%; width: 3px; height: 11px; margin-left: -1.5px; background: var(--ink); border-radius: 2px; }
+.tv:hover .knob.k1 { transform: rotate(120deg); } .tv:hover .knob.k2 { transform: rotate(-80deg); }
+.tv .grill { width: 26px; height: 40px; margin-top: 4px; background: repeating-linear-gradient(to bottom, rgba(255, 255, 255, .22) 0 3px, transparent 3px 7px); border-radius: 4px; }
+.tv .light { width: 9px; height: 9px; border-radius: 50%; background: #4A3A12; }
+.tv.is-on .light { background: var(--sun-deep); box-shadow: 0 0 8px var(--sun-deep); }
+.tv .feet { display: flex; justify-content: space-between; padding: 0 34px; }
+.tv .feet i { width: 14px; height: 10px; background: #16181D; border-radius: 0 0 6px 6px; }
+@media (prefers-reduced-motion: reduce) { .tv:hover .ant { animation: none; } .tv.is-on .on { animation: none; opacity: 1; } }
+.pitch-title { font-size: 23px; font-weight: 600; line-height: 1.2; }
+.pitch-sub { font-size: 18px; color: var(--muted); margin-top: 4px; }
+.hl { color: inherit; font-weight: 600; padding-inline: 2px; background: linear-gradient(transparent 52%, #FFD95E 52%, #FFD95E 92%, transparent 92%) no-repeat 0 0 / 100% 100%; animation: sweep 1.1s 1s var(--ease) backwards; }
+@keyframes sweep { from { background-size: 0% 100%; } }
+
+/* Work timeline */
+.timeline { list-style: none; margin: 0; padding: 0 0 0 30px; position: relative; display: flex; flex-direction: column; gap: 8px; }
+.timeline::before { content: ""; position: absolute; left: 7px; top: 14px; bottom: 14px; width: 2px; background: var(--line); }
+.timeline .fill { position: absolute; left: 7px; top: 14px; bottom: 14px; width: 2px; background: var(--sun-deep); transform-origin: top; transform: scaleY(var(--p, 1)); }
+.timeline li { position: relative; }
+.timeline a { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0 16px; align-items: baseline; padding: 12px 14px; margin-left: -6px; border-radius: 10px; transition: background .3s var(--ease), transform .3s var(--ease); }
+.timeline a:hover { background: var(--sun); transform: translateX(4px); }
+.timeline .dot { position: absolute; left: -29px; top: 21px; width: 14px; height: 14px; border-radius: 50%; background: var(--paper); border: 2px solid var(--ink); transition: transform .3s var(--ease), background .3s; }
+.timeline a:hover .dot { transform: scale(1.3); background: var(--sun-deep); }
+.timeline .next .dot { background: var(--sun-deep); border-color: var(--sun-deep); }
+.timeline .next .dot::after { content: ""; position: absolute; inset: -6px; border-radius: 50%; border: 2px solid var(--sun-deep); animation: ping 2s ease-out infinite; }
+@keyframes ping { from { transform: scale(.6); opacity: .9; } to { transform: scale(1.6); opacity: 0; } }
+.timeline .co { font-size: 23px; font-weight: 600; line-height: 1.2; }
+
+.timeline a.soon { cursor: default; }
+.timeline a.soon:hover { transform: none; }
+.timeline .when { grid-column: 2; grid-row: 1; font-size: 13px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
+.timeline .role { grid-column: 1 / -1; font-size: 18px; color: var(--muted); }
+.tag { display: inline-block; font-size: 15px; font-style: normal; font-weight: 600; background: var(--sun-deep); color: var(--ink); border-radius: 999px; padding: 0 10px; margin-left: 6px; vertical-align: 2px; }
+
+/* Project cards with small live drawings */
+.cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; }
+.cards a { display: flex; flex-direction: column; border: 0; border-radius: 14px; overflow: hidden; background: #FAF8F2; transition: transform .35s var(--ease), border-color .35s var(--ease), box-shadow .35s var(--ease); }
+.cards a.later { transition: opacity .7s var(--ease), transform .5s var(--ease), border-color .35s var(--ease), box-shadow .35s var(--ease); transition-delay: calc(var(--d, 0) * 90ms), 0s, 0s, 0s; }
+.cards a:hover { transform: translateY(-6px); border-color: var(--sun-deep); box-shadow: 0 16px 30px rgba(22, 24, 29, .10); }
+.art { height: 168px; background: var(--sun); display: grid; place-items: center; position: relative; transition: background .35s var(--ease); }
+.cards a:hover .art { background: #FFE9A3; }
+.art svg { position: absolute; left: 16px; top: 16px; width: calc(100% - 32px); height: calc(100% - 32px); overflow: visible; }
+.body { display: flex; flex-direction: column; gap: 4px; padding: 14px 16px 16px; flex: 1; }
+.kicker { font-size: 16px; font-style: italic; color: var(--muted); }
+.title { font-size: 22px; font-weight: 600; line-height: 1.15; }
+.what { font-size: 17px; color: var(--muted); line-height: 1.4; }
+.go { margin-top: auto; padding-top: 8px; font-size: 17px; color: var(--muted); transition: transform .3s var(--ease), color .3s; }
+.cards a:hover .go { transform: translateX(5px); color: var(--ink); }
+.live { position: absolute; right: 10px; top: 8px; font-size: 14px; font-variant-numeric: tabular-nums; color: var(--ink); background: var(--paper); border-radius: 999px; padding: 0 9px; display: inline-flex; align-items: center; gap: 6px; }
+.live::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: #2FA35B; animation: blink 1.6s ease-in-out infinite; }
+@keyframes blink { 50% { opacity: .25; } }
+.feed { animation: scrollfeed 5s var(--ease) infinite; }
+@keyframes scrollfeed { 0%, 20% { transform: translateY(0); } 40%, 60% { transform: translateY(-22px); } 80%, 100% { transform: translateY(-44px); } }
+
+/* Photo cards: printed-photo frames that tilt toward the cursor */
+.card { margin: 0; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.shot { --r: 0deg; --rx: 0deg; --ry: 0deg; display: block; width: 100%; max-width: 100%; border: 0; padding: 7px; background: var(--paper); border-radius: 4px; cursor: zoom-in; transform: perspective(800px) rotate(var(--r)) rotateX(var(--rx)) rotateY(var(--ry)); box-shadow: 0 1px 2px rgba(22, 24, 29, .12), 0 6px 16px rgba(22, 24, 29, .08); transition: transform .35s var(--ease), box-shadow .35s var(--ease); will-change: transform; }
+.shot img { display: block; width: 100%; height: 100%; object-fit: cover; border-radius: 2px; }
+.shot:hover { --r: 0deg !important; transform: perspective(800px) translateY(-6px) scale(1.03) rotateX(var(--rx)) rotateY(var(--ry)); box-shadow: 0 2px 4px rgba(22, 24, 29, .12), 0 18px 34px rgba(22, 24, 29, .16); }
+.shot.wiggle { animation: tilt .5s var(--ease); }
+@keyframes tilt { 25% { transform: rotate(-5deg) scale(1.04); } 60% { transform: rotate(4deg) scale(1.04); } }
+.card figcaption { font-size: 15px; font-style: italic; color: var(--muted); line-height: 1.3; padding-inline: 4px; text-align: center; }
+
+.lately { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--blk) 28px; }
+.lately .shot { aspect-ratio: 4 / 3; }
+
+.life { display: flex; flex-direction: column; gap: var(--blk); }
+.life h2 { margin-bottom: 0; }
+.life > p { color: var(--muted); max-width: var(--measure); font-size: 22px; line-height: 1.6; }
+.currently { list-style: none; margin: var(--blk) 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.currently li { display: flex; flex-direction: column; gap: 2px; padding: 14px 16px 15px; border-radius: 12px; background: var(--sun); line-height: 1.3; font-size: 19px; transition: transform .3s var(--ease), background .3s; }
+.currently li:hover { transform: translateY(-3px); background: #FFE9A3; }
+.currently .k { font-size: 14px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: #8A6D12; }
+.photos { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: var(--blk) 28px; }
+.photos .wide { grid-column: span 3; }
+.photos .wide .shot { aspect-ratio: 3 / 2; }
+.photos .small .shot { aspect-ratio: 4 / 5; }
+.photos .small:nth-of-type(3) { grid-column: 2 / span 2; }
+.photos .small:nth-of-type(4) { grid-column: 4 / span 2; }
+
+.links { display: flex; flex-wrap: wrap; gap: 8px 26px; font-size: 21px; }
+.links a { position: relative; display: inline-flex; align-items: center; gap: 8px; }
+.ico { width: 22px; height: 22px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; padding: 3px; box-sizing: content-box; border-radius: 8px; background: var(--sun); transition: transform .3s var(--ease), background .3s; }
+.addr { margin-top: 16px; font-size: 18px; color: var(--muted); user-select: all; }
+.copied { font-style: italic; color: #8A6D12; }
+.addr { min-height: 1.5em; }
+.links a[data-tip]::before { content: attr(data-tip); position: absolute; left: 0; bottom: calc(100% + 10px); white-space: nowrap; background: var(--ink); color: var(--paper); font-size: 16px; padding: 4px 12px; border-radius: 8px; opacity: 0; transform: translateY(4px); transition: opacity .2s, transform .25s var(--ease); pointer-events: none; z-index: 5; }
+.links a[data-tip]:hover::before, .links a[data-tip]:focus-visible::before { opacity: 1; transform: none; }
+.links a:hover .ico { transform: rotate(-8deg) scale(1.1); background: var(--sun-deep); }
+.links a::after { content: ""; position: absolute; left: 0; right: 0; bottom: 2px; height: 2px; background: var(--sun-deep); transform: scaleX(.25); transform-origin: left; transition: transform .3s var(--ease); }
+.links a:hover::after { transform: scaleX(1); }
+footer { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; border-top: 1px solid var(--line); padding-top: 18px; font-size: 17px; color: var(--muted); }
+footer a:hover { color: var(--ink); }
+
+/* San's wheel in the footer */
+.wheel { position: relative; width: 96px; height: 96px; border: 0; padding: 0; background: none; cursor: pointer; flex: none; }
+.wheel svg { width: 100%; height: 100%; overflow: visible; }
+.wheel .rim { fill: var(--sun); stroke: var(--ink); stroke-width: 3; }
+.wheel .rim2 { fill: none; stroke: var(--ink); stroke-width: 1.2; stroke-dasharray: 2 5; }
+.wheel .spk line { stroke: var(--ink); stroke-width: 1.4; opacity: .35; }
+.wheel .hub { fill: var(--ink); }
+.wheel .leg { stroke: var(--ink); stroke-width: 3; stroke-linecap: round; }
+#spokes { transform-origin: 50px 50px; }
+#san { position: absolute; left: 50%; bottom: 13px; width: 50px; transform: translateX(-50%); pointer-events: none; }
+.wheel-cap { font-style: italic; flex: 1; min-width: 12em; }
+
+/* Life: a cork pin board with pinned polaroids */
+.board { position: relative; aspect-ratio: 960 / 760; border-radius: 10px; border: 14px solid #8A6240;
+  background-color: #C9A06B;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .35 0 0 0 0 .22 0 0 0 0 .1 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)'/%3E%3C/svg%3E"), radial-gradient(ellipse at 50% 40%, rgba(255, 240, 210, .35), transparent 70%);
+  box-shadow: inset 0 0 0 2px rgba(0, 0, 0, .12), inset 0 10px 24px rgba(0, 0, 0, .25), 0 18px 40px -18px rgba(22, 24, 29, .45); }
+.board::before { content: ""; position: absolute; inset: -14px; border-radius: 10px; pointer-events: none; box-shadow: inset 0 2px 0 rgba(255, 255, 255, .18), inset 0 -3px 0 rgba(0, 0, 0, .25); }
+.pin { position: absolute; left: var(--x); top: var(--y); width: var(--w); margin: 0; }
+.pin .shot { --r: var(--rot); padding: 10px 10px 46px; border-radius: 2px; background: #FFFDF8; box-shadow: 0 2px 3px rgba(0, 0, 0, .18), 0 14px 22px -8px rgba(0, 0, 0, .35); }
+.pin .shot img { display: block; width: 100%; height: auto; border-radius: 1px; }
+.pin figcaption { position: absolute; left: 0; right: 0; bottom: 12px; text-align: center; font-size: 18px; font-style: italic; color: var(--ink); pointer-events: none; transform: rotate(var(--rot)); }
+.pin::before { content: ""; position: absolute; z-index: 3; left: 50%; top: -9px; width: 20px; height: 20px; margin-left: -10px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, .85) 0 3px, transparent 4px), var(--pin);
+  box-shadow: inset -2px -3px 4px rgba(0, 0, 0, .25), 2px 5px 5px rgba(0, 0, 0, .35); pointer-events: none; }
+.pin:hover { z-index: 4; }
+@media (max-width: 640px) {
+  .board { aspect-ratio: auto; display: grid; grid-template-columns: 1fr 1fr; gap: 26px 14px; padding: 22px 12px 16px; border-width: 10px; }
+  .pin { position: relative; left: auto; top: auto; width: auto; }
+  .pin figcaption { font-size: 15px; bottom: 8px; } .pin .shot { padding: 7px 7px 34px; }
+}
+/* The pitch video: sits on the TV screen, then floats in a corner when you scroll away so it keeps playing */
+.vplayer { position: fixed; z-index: 40; left: 0; top: 0; width: 0; height: 0; overflow: hidden; border-radius: 14px; background: #FFF1C4; opacity: 0; pointer-events: none; transition: opacity .3s; }
+.vplayer.show { opacity: 1; pointer-events: auto; }
+.vplayer.anim { transition: left .45s var(--ease), top .45s var(--ease), width .45s var(--ease), height .45s var(--ease), transform .45s var(--ease), border-radius .45s, opacity .3s; }
+.vplayer video { width: 100%; height: 100%; object-fit: cover; display: block; cursor: pointer; }
+.vplayer.float { border-radius: 16px; box-shadow: 0 0 0 6px #fff, 7px 10px 0 6px rgba(22, 24, 29, .16); transform: rotate(-2deg); overflow: visible; }
+.vplayer.float video { border-radius: 12px; }
+.vplayer .tape { position: absolute; top: -14px; left: 50%; width: 70px; height: 22px; transform: translateX(-50%) rotate(-3deg); background: rgba(250, 247, 238, .85); box-shadow: 0 1px 2px rgba(22, 24, 29, .12); opacity: 0; transition: opacity .3s; clip-path: polygon(3% 0, 97% 4%, 100% 30%, 96% 55%, 100% 100%, 2% 96%, 0 60%, 4% 35%); }
+.vplayer.float .tape { opacity: 1; }
+.vplayer .vbtn { position: absolute; top: -10px; width: 30px; height: 30px; border-radius: 50%; border: 0; background: var(--ink); color: #fff; font: 600 15px/30px var(--serif); text-align: center; cursor: pointer; opacity: 0; transform: scale(.6); transition: opacity .25s, transform .25s var(--ease); }
+.vplayer .vx { right: -10px; } .vplayer .vup { left: -10px; }
+.vplayer.float .vbtn { opacity: 1; transform: none; }
+.vplayer .bar { position: absolute; left: 0; bottom: 0; height: 4px; width: 0; background: var(--sun-deep); border-radius: 0 2px 2px 0; }
+.vplayer.paused::after { content: "▶"; position: absolute; inset: 0; display: grid; place-items: center; font-size: 28px; color: var(--ink); background: rgba(255, 241, 196, .35); pointer-events: none; }
+/* Miaomiao peeking in from the bottom corner */
+.peek { position: fixed; z-index: 20; right: calc(24px + env(safe-area-inset-right, 0px)); bottom: 0; width: 110px; border: 0; padding: 0; background: none; cursor: pointer; transform: translateY(115%); transition: transform .7s cubic-bezier(.34, 1.4, .5, 1); }
+.peek img { display: block; width: 100%; height: auto; transform-origin: 50% 100%; filter: drop-shadow(0 -4px 10px rgba(22, 24, 29, .12)); }
+.peek.show { transform: translateY(52%); }
+.peek:hover, .peek.talk { transform: translateY(18%); }
+.peek.hop img { animation: hop .5s var(--ease); }
+@keyframes hop { 30% { transform: translateY(-14px) rotate(-6deg); } 60% { transform: translateY(0) rotate(5deg); } 80% { transform: rotate(-2deg); } }
+.peek-bubble { position: absolute; right: 78%; top: -10px; white-space: nowrap; background: var(--paper); border: 1.5px solid var(--ink); border-radius: 14px 14px 4px 14px; padding: 2px 12px; font-size: 17px; font-style: italic; color: var(--ink); opacity: 0; transform: translateY(6px) scale(.9); transition: opacity .2s, transform .25s var(--ease); pointer-events: none; }
+.peek.talk .peek-bubble { opacity: 1; transform: none; }
+@media (max-width: 640px) { .peek { width: 84px; right: calc(12px + env(safe-area-inset-right, 0px)); } .wheel-cap { min-width: 0; } }
+
+/* Photo viewer */
+#lb { border: 0; padding: 0; background: transparent; width: min(92vw, 1080px); max-width: none; max-height: none; overflow: visible; }
+#lb::backdrop { background: rgba(22, 24, 29, .82); }
+#lb figure { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 14px; }
+#lb[open] figure { animation: pop .4s var(--ease); }
+@keyframes pop { from { opacity: 0; transform: scale(.94) translateY(12px); } }
+.lb-stage { position: relative; display: flex; justify-content: center; max-width: 100%; }
+#lb-img { display: block; max-width: 100%; max-height: 76vh; object-fit: contain; border: 8px solid #FFFFFF; border-radius: 4px; box-shadow: 0 24px 60px rgba(0, 0, 0, .35); transition: opacity .2s; }
+#lb-img.swap { opacity: 0; }
+#lb figcaption { color: #FFFFFF; font-size: 21px; text-align: center; }
+.lb-count { color: rgba(255, 255, 255, .6); font-size: 17px; font-style: italic; margin-left: 8px; }
+.lb-btn { position: absolute; width: 44px; height: 44px; border-radius: 50%; border: 0; background: #FFFFFF; color: var(--ink); font: 600 26px/1 var(--serif); display: grid; place-items: center; cursor: pointer; box-shadow: 0 4px 14px rgba(0, 0, 0, .25); transition: transform .2s var(--ease), background .2s; }
+.lb-btn:hover { background: var(--sun); transform: scale(1.08); }
+.lb-close { top: -56px; right: 0; }
+.lb-prev { left: -22px; top: 50%; margin-top: -22px; }
+.lb-next { right: -22px; top: 50%; margin-top: -22px; }
+
+@media (max-width: 640px) {
+  .banner { height: 210px; }
+  main { --sec: 80px; --blk: 24px; }
+  .pitch { grid-template-columns: minmax(0, 1fr); margin-top: calc(var(--blk) - var(--sec) + 24px); }
+  .currently { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+  .hero { grid-template-columns: minmax(0, 1fr); margin-top: -80px; }
+  .hero-text { padding-top: 0; }
+  .lb-prev { left: 6px; }
+  .lb-next { right: 6px; }
+  .me-photo { width: 140px; justify-self: start; grid-row: 1; }
+  .bubble { left: auto; right: -40px; border-radius: 14px 14px 14px 4px; }
+  .cards { grid-template-columns: minmax(0, 1fr); }
+  .timeline .when { grid-column: 1; grid-row: auto; }
+  .lately { display: flex; gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 12px 4px 16px; margin-inline: -4px; }
+  .lately .card { flex: 0 0 78%; scroll-snap-align: center; }
+  .lately .card:nth-child(even) { margin-top: 0; }
+  .photos { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .photos .wide { grid-column: span 2; }
+  .photos .small:nth-of-type(n) { grid-column: span 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .later { opacity: 1; transform: none; }
+}
+</style>
+</head>
+<body>
+<header class="banner">
+  <div class="banner-img" aria-hidden="true"></div>
+  <div class="banner-inner">
+  <nav aria-label="Main" class="reveal" style="--i:0">
+    <a class="me" href="#top">Ye Lin</a>
+    <a href="#work">Work</a>
+    <a href="#projects">Projects</a>
+    <a href="#life">Life</a>
+    <a href="#contact">Contact</a>
+  </nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero" id="top">
+    <div class="hero-text">
+      <h1 class="reveal" style="--i:1">Hi, I'm <span class="name">Ye.<svg viewBox="0 0 100 12" preserveAspectRatio="none" aria-hidden="true"><path d="M2 8 C 22 2, 42 11, 60 6 S 90 3, 98 7"/></svg></span></h1>
+      <p class="reveal" style="--i:2">I'm a computer science student at Cornell with a minor in AI. I build the backend systems behind data and AI products: the pipelines that move data, the databases that store it, and the APIs that serve it fast.</p>
+    </div>
+    <button class="me-photo reveal" style="--i:3" type="button" id="me" aria-label="Say hi">
+      <span class="bubble" aria-hidden="true">hi there!</span>
+      <img src="portrait.jpg" alt="Ye Lin in front of the Golden Gate Bridge">
+    </button>
+  </section>
+
+  <section class="pitch reveal" aria-label="Elevator pitch video" style="--i:4">
+    <button class="tv" id="pitch-video" type="button" aria-label="Turn on the TV to watch my elevator pitch">
+      <span class="ant" aria-hidden="true"><i></i></span>
+      <span class="body">
+        <span class="screen"><canvas width="96" height="72" aria-hidden="true"></canvas><span class="play" aria-hidden="true"></span>
+          <span class="on"></span></span>
+        <span class="side" aria-hidden="true"><span class="knob k1"></span><span class="knob k2"></span><span class="grill"></span><span class="light"></span></span>
+      </span>
+      <span class="feet" aria-hidden="true"><i></i><i></i></span>
+    </button>
+    <div class="pitch-text">
+      <p class="pitch-title">Meet me in under a minute</p>
+    </div>
+  </section>
+
+  <section id="now" aria-labelledby="now-h" class="reveal" style="--i:5">
+    <h2 id="now-h">What I'm up to</h2>
+    <div class="prose">
+      <p>Next summer, I'll be a <a href="https://www.tiktok.com/about?lang=en" target="_blank" rel="noopener">software engineer intern at TikTok</a> on the Ads Measurement and Signal team.</p>
+      <p>Right now, I'm building a <a class="plain" href="rec-pipeline.html">real-time recommendation pipeline</a> that turns user activity into ranking features in milliseconds. I'm also looking for a <mark class="hl">winter software engineering internship in backend and data infrastructure</mark>.</p>
+      <p>On campus, I started the AWS Student Builder Group and I'm on the tech committee and an outreach volunteer at Women in Computing at Cornell.</p>
+    </div>
+    <ul class="currently" aria-label="Currently">
+      <li><span class="k">Learning</span><span>How to train ML at scale</span></li>
+      <li><span class="k">Studying</span><span>How AI models reason</span></li>
+      <li><span class="k">Sharpening</span><span>My algorithm design</span></li>
+    </ul>
+  </section>
+
+  <section id="work" aria-labelledby="work-h" class="later">
+    <h2 id="work-h">Work experience</h2>
+    <ul class="timeline" id="timeline">
+      <li class="fill" aria-hidden="true"></li>
+      <li class="next later" style="--d:1"><a href="https://www.tiktok.com/about?lang=en" target="_blank" rel="noopener"><span class="dot" aria-hidden="true"></span><span class="co">TikTok<span class="tag">Incoming</span></span><span class="when">Summer 2027</span><span class="role">Software Engineer Intern, Ads Measurement and Signal</span></a></li>
+      <li class="later" style="--d:2"><a href="https://idlexperts.ai/" target="_blank" rel="noopener"><span class="dot" aria-hidden="true"></span><span class="co">idlexperts</span><span class="when">Feb 2026–now</span><span class="role">Problem Design Engineer: designing the tasks and environments that train frontier AI models</span></a></li>
+      <li class="later" style="--d:3"><a href="pronexus.html"><span class="dot" aria-hidden="true"></span><span class="co">ProNexus</span><span class="when">May–Aug 2026</span><span class="role">Software Engineer Intern: matched 20,000+ applicants to 3,000+ roles</span></a></li>
+      <li class="later" style="--d:4"><a href="enhansys.html"><span class="dot" aria-hidden="true"></span><span class="co">Enhansys</span><span class="when">Feb–May 2026</span><span class="role">Backend Developer Intern: loaded 1.27M+ market data records in under an hour</span></a></li>
+    </ul>
+  </section>
+
+  <section id="projects" aria-labelledby="projects-h" class="later">
+    <h2 id="projects-h">Projects</h2>
+    <div class="cards">
+      <a href="rec-pipeline.html" class="later" style="--d:1">
+        <div class="art" aria-hidden="true">
+          <span class="live"><b id="eps">5,000</b>&nbsp;events/s</span>
+          <svg viewBox="0 0 220 110">
+            <path id="p1" d="M30 30 C 80 30, 90 55, 130 55" fill="none" stroke="#16181D" stroke-opacity=".25" stroke-width="1.5" stroke-dasharray="3 4"/>
+            <path id="p2" d="M30 55 L 130 55" fill="none" stroke="#16181D" stroke-opacity=".25" stroke-width="1.5" stroke-dasharray="3 4"/>
+            <path id="p3" d="M30 80 C 80 80, 90 55, 130 55" fill="none" stroke="#16181D" stroke-opacity=".25" stroke-width="1.5" stroke-dasharray="3 4"/>
+            <path id="p4" d="M140 55 L 178 55" fill="none" stroke="#16181D" stroke-opacity=".25" stroke-width="1.5" stroke-dasharray="3 4"/>
+            <g fill="#FFFFFF" stroke="#16181D" stroke-width="1.5">
+              <circle cx="24" cy="30" r="7"/><circle cx="24" cy="55" r="7"/><circle cx="24" cy="80" r="7"/>
+              <rect x="122" y="44" width="22" height="22" rx="5"/>
+              <path d="M176 44 v22 a14 5 0 0 0 28 0 v-22"/><ellipse cx="190" cy="44" rx="14" ry="5"/>
+            </g>
+            <g fill="#1E4FD8">
+              <circle r="3.5"><animateMotion dur="1.6s" repeatCount="indefinite"><mpath href="#p1"/></animateMotion></circle>
+              <circle r="3.5"><animateMotion dur="1.3s" begin=".4s" repeatCount="indefinite"><mpath href="#p2"/></animateMotion></circle>
+              <circle r="3.5"><animateMotion dur="1.8s" begin=".8s" repeatCount="indefinite"><mpath href="#p3"/></animateMotion></circle>
+              <circle r="3.5"><animateMotion dur=".9s" begin=".2s" repeatCount="indefinite"><mpath href="#p4"/></animateMotion></circle>
+            </g>
+          </svg>
+        </div>
+        <div class="body"><span class="title">Real-time recommendation pipeline</span><span class="what">Kafka, Flink, Redis. Features served in about 50 ms.</span><span class="go">Read more →</span></div>
+      </a>
+      <a href="skill2.html" class="later" style="--d:2">
+        <div class="art" aria-hidden="true">
+          <svg viewBox="0 0 220 110">
+            <g stroke="#16181D" stroke-width="3" stroke-linecap="round" fill="none">
+              <line x1="110" y1="34" x2="110" y2="58"><animate attributeName="y1" dur="2.4s" repeatCount="indefinite" values="34;48;34" keyTimes="0;.5;1" calcMode="spline" keySplines=".4 0 .2 1;.4 0 .2 1"/><animate attributeName="y2" dur="2.4s" repeatCount="indefinite" values="58;70;58" keyTimes="0;.5;1" calcMode="spline" keySplines=".4 0 .2 1;.4 0 .2 1"/><animate attributeName="x2" dur="2.4s" repeatCount="indefinite" values="110;102;110" keyTimes="0;.5;1" calcMode="spline" keySplines=".4 0 .2 1;.4 0 .2 1"/></line>
+              <polyline points="110,58 110,76 110,94"><animate attributeName="points" dur="2.4s" repeatCount="indefinite" values="110,58 110,76 110,94;102,70 118,78 110,94;110,58 110,76 110,94" keyTimes="0;.5;1" calcMode="spline" keySplines=".4 0 .2 1;.4 0 .2 1"/></polyline>
+              <polyline points="110,38 124,50 132,44"><animate attributeName="points" dur="2.4s" repeatCount="indefinite" values="110,38 124,50 132,44;110,52 128,52 140,52;110,38 124,50 132,44" keyTimes="0;.5;1" calcMode="spline" keySplines=".4 0 .2 1;.4 0 .2 1"/></polyline>
+            </g>
+            <circle cx="110" cy="24" r="9" fill="#FFFFFF" stroke="#16181D" stroke-width="3"><animate attributeName="cy" dur="2.4s" repeatCount="indefinite" values="24;38;24" keyTimes="0;.5;1" calcMode="spline" keySplines=".4 0 .2 1;.4 0 .2 1"/></circle>
+            <g fill="#1E4FD8">
+              <circle cx="110" cy="58" r="3.5"><animate attributeName="cx" dur="2.4s" repeatCount="indefinite" values="110;102;110" keyTimes="0;.5;1" calcMode="spline" keySplines=".4 0 .2 1;.4 0 .2 1"/><animate attributeName="cy" dur="2.4s" repeatCount="indefinite" values="58;70;58" keyTimes="0;.5;1" calcMode="spline" keySplines=".4 0 .2 1;.4 0 .2 1"/></circle>
+              <circle cx="110" cy="76" r="3.5"><animate attributeName="cx" dur="2.4s" repeatCount="indefinite" values="110;118;110" keyTimes="0;.5;1" calcMode="spline" keySplines=".4 0 .2 1;.4 0 .2 1"/><animate attributeName="cy" dur="2.4s" repeatCount="indefinite" values="76;78;76" keyTimes="0;.5;1" calcMode="spline" keySplines=".4 0 .2 1;.4 0 .2 1"/></circle>
+              <circle cx="110" cy="94" r="3.5"/>
+            </g>
+            <text x="150" y="30" font-family="Crimson Pro, Georgia, serif" font-size="13" font-style="italic" fill="#16181D">knees out!<animate attributeName="opacity" dur="2.4s" repeatCount="indefinite" values="0;1;0" keyTimes="0;.5;1"/></text>
+            <line x1="80" y1="96" x2="140" y2="96" stroke="#16181D" stroke-opacity=".25" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="body"><span class="title">Skill2</span><span class="what">AI coaching from your webcam. I led the backend.</span><span class="go">Read more →</span></div>
+      </a>
+    </div>
+  </section>
+
+  <section aria-labelledby="lately-h" class="later">
+    <h2 id="lately-h">Lately</h2>
+    <div class="lately">
+      <figure class="card later" style="--d:0"><button class="shot" type="button" style="--r:1deg"><img src="design-fest.jpg" alt="Ye and a teammate at the AWS Student Builder Group table at Design Fest, with QR codes and craft supplies"></button><figcaption>Representing AWS at Design Fest</figcaption></figure>
+      <figure class="card later" style="--d:1"><button class="shot" type="button" style="--r:-2deg"><img src="workshop.jpg" alt="Ye pointing at the AWS Amplify console on a big screen while students follow along on laptops"></button><figcaption>Leading an AWS workshop</figcaption></figure>
+      <figure class="card later" style="--d:2"><button class="shot" type="button" style="--r:1.5deg"><img src="ai-hackathon.jpg" alt="Ye and her team at the Cornell AI Hackathon"></button><figcaption>Cornell AI Hackathon</figcaption></figure>
+      <figure class="card later" style="--d:3"><button class="shot" type="button" style="--r:-1deg"><img src="nvidia-dell.jpg" alt="Ye and teammates working on laptops at the NVIDIA × Dell Hackathon"></button><figcaption>NVIDIA × Dell Hackathon</figcaption></figure>
+    </div>
+  </section>
+
+  <section class="life later" id="life" aria-labelledby="life-h">
+    <h2 id="life-h">Life</h2>
+    <p>Off the clock, I'm either on stage pretending to be someone else or backstage telling other people how to pretend. At home, I answer to Miaomiao, a cat with strong opinions, and San, a hamster with even stronger cheek pouches.</p>
+    <div class="board" aria-label="Pin board of photos">
+      <figure class="pin later" style="--d:1;--x:3%;--y:5%;--w:43%;--rot:-3deg;--pin:#E4572E"><button class="shot" type="button"><img src="acting.jpg" alt="Ye on stage with the cast in costume after a show"></button><figcaption>Acting</figcaption></figure>
+      <figure class="pin later" style="--d:2;--x:52%;--y:9%;--w:44%;--rot:2.5deg;--pin:#F2C94C"><button class="shot" type="button"><img src="directing.jpg" alt="The full cast and crew on stage holding flowers after the show Ye directed"></button><figcaption>Directing</figcaption></figure>
+      <figure class="pin later" style="--d:3;--x:17%;--y:51%;--w:23%;--rot:4deg;--pin:#3B6FE0"><button class="shot" type="button"><img src="cat.jpg" alt="Miaomiao, my orange cat, rolling on her back"></button><figcaption>My Cat Miaomiao</figcaption></figure>
+      <figure class="pin later" style="--d:4;--x:58%;--y:54%;--w:23%;--rot:-3.5deg;--pin:#5BB98B"><button class="shot" type="button"><img src="hamster.jpg" alt="San, my Syrian hamster"></button><figcaption>My Hamster San</figcaption></figure>
+    </div>
+  </section>
+
+  <section id="contact" aria-labelledby="contact-h" class="later">
+    <h2 id="contact-h">Say hi</h2>
+    <div class="links">
+      <a href="#contact" id="email" data-tip="YL3794@cornell.edu · click to copy" aria-label="Email YL3794@cornell.edu, click to copy"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M4 7l8 6 8-6"/></svg>Email</a>
+      <a href="https://github.com/yl3794" target="_blank" rel="noopener"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 7L3.5 12l5 5"/><path d="M15.5 7l5 5-5 5"/><path d="M13.5 5l-3 14"/></svg>GitHub</a>
+      <a href="https://www.linkedin.com/in/yelincs/" target="_blank" rel="noopener"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2.5"/><path d="M9 7V5.5A1.5 1.5 0 0 1 10.5 4h3A1.5 1.5 0 0 1 15 5.5V7"/><path d="M3 12.5h18"/></svg>LinkedIn</a>
+      <a href="resume.pdf" target="_blank" rel="noopener"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M8.5 13h7M8.5 16.5h5"/></svg>Résumé</a>
+    </div>
+    <p class="addr"><span id="copied" class="copied" aria-live="polite"></span></p>
+  </section>
+
+  <footer>
+    <span></span>
+    <button class="wheel" id="wheel" type="button" aria-label="San's wheel. Click to make San run faster.">
+      <svg viewBox="0 0 100 100" aria-hidden="true">
+        <line x1="34" y1="88" x2="28" y2="99" class="leg"/><line x1="66" y1="88" x2="72" y2="99" class="leg"/>
+        <g id="spokes"><circle cx="50" cy="50" r="44" class="rim"/><circle cx="50" cy="50" r="40" class="rim2"/>
+          <g class="spk"><line x1="50" y1="10" x2="50" y2="90"/><line x1="10" y1="50" x2="90" y2="50"/><line x1="22" y1="22" x2="78" y2="78"/><line x1="78" y1="22" x2="22" y2="78"/></g>
+          <circle cx="50" cy="50" r="5" class="hub"/></g>
+      </svg>
+      <img id="san" src="san-sticker.png" alt="">
+    </button>
+    <span class="wheel-cap" id="wheelCap">San powers this site. Scroll to help him run.</span>
+    <a href="#top">Back to top ↑</a>
+  </footer>
+</main>
+
+<button class="peek" id="peek" type="button" aria-label="Miaomiao the cat. Click to say hi."><span class="peek-bubble" id="peekSay">mrrp?</span><img src="cat-peek.png" alt=""></button>
+
+<dialog id="lb" aria-label="Photo viewer">
+  <button class="lb-btn lb-close" type="button" aria-label="Close">×</button>
+  <figure>
+    <div class="lb-stage">
+      <button class="lb-btn lb-prev" type="button" aria-label="Previous photo">‹</button>
+      <img id="lb-img" src="data:," alt="">
+      <button class="lb-btn lb-next" type="button" aria-label="Next photo">›</button>
+    </div>
+    <figcaption><span id="lb-cap"></span> <span class="lb-count" id="lb-count"></span></figcaption>
+  </figure>
+</dialog>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduce) document.querySelectorAll('.art svg').forEach(s => s.pauseAnimations && s.pauseAnimations());
+
+  function wiggle(el) {
+    el.classList.remove('wiggle');
+    void el.offsetWidth;
+    el.classList.add('wiggle');
+    clearTimeout(el._t);
+    el._t = setTimeout(() => el.classList.remove('wiggle'), 2600);
+  }
+  document.getElementById('me').addEventListener('click', e => wiggle(e.currentTarget));
+
+  // Email: copy the address too, since mail links do not open everywhere
+  document.getElementById('email').addEventListener('click', e => {
+    e.preventDefault();
+    const done = document.getElementById('copied');
+    const say = t => { done.textContent = t; setTimeout(() => done.textContent = '', 2200); };
+    const pick = () => say('reach me on LinkedIn instead');
+    try { navigator.clipboard.writeText('YL3794@cornell.edu').then(() => say('copied!'), pick); } catch (err) { pick(); }
+  });
+
+  // Photo viewer: click any photo to open it, arrows to move between photos
+  const shots = [...document.querySelectorAll('button.shot')];
+  const lb = document.getElementById('lb'), lbImg = document.getElementById('lb-img');
+  const lbCap = document.getElementById('lb-cap'), lbCount = document.getElementById('lb-count');
+  let cur = 0;
+  function show(i) {
+    cur = (i + shots.length) % shots.length;
+    const img = shots[cur].querySelector('img');
+    const cap = shots[cur].closest('figure').querySelector('figcaption');
+    lbImg.classList.add('swap');
+    setTimeout(() => {
+      lbImg.src = img.src; lbImg.alt = img.alt;
+      lbCap.textContent = cap ? cap.textContent : '';
+      lbCount.textContent = (cur + 1) + ' / ' + shots.length;
+      lbImg.classList.remove('swap');
+    }, lb.open ? 150 : 0);
+  }
+  function openAt(i) { show(i); if (!lb.open) lb.showModal(); }
+  lb.querySelector('.lb-close').addEventListener('click', () => lb.close());
+  lb.querySelector('.lb-prev').addEventListener('click', () => show(cur - 1));
+  lb.querySelector('.lb-next').addEventListener('click', () => show(cur + 1));
+  lb.addEventListener('click', e => { if (e.target === lb) lb.close(); });
+  lb.addEventListener('keydown', e => { if (e.key === 'ArrowLeft') show(cur - 1); if (e.key === 'ArrowRight') show(cur + 1); });
+  let sx = null;
+  lb.addEventListener('touchstart', e => { sx = e.touches[0].clientX; }, { passive: true });
+  lb.addEventListener('touchend', e => { if (sx === null) return; const dx = e.changedTouches[0].clientX - sx; if (Math.abs(dx) > 40) show(cur + (dx < 0 ? 1 : -1)); sx = null; });
+
+  // Photos lean toward the cursor
+  shots.forEach((b, i) => {
+    b.setAttribute('aria-label', 'Open photo: ' + (b.closest('figure').querySelector('figcaption')?.textContent || 'photo'));
+    b.addEventListener('click', () => openAt(i));
+    if (reduce) return;
+    b.addEventListener('pointermove', e => {
+      const r = b.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5;
+      b.style.setProperty('--ry', (x * 10).toFixed(2) + 'deg');
+      b.style.setProperty('--rx', (-y * 10).toFixed(2) + 'deg');
+    });
+    b.addEventListener('pointerleave', () => { b.style.setProperty('--rx', '0deg'); b.style.setProperty('--ry', '0deg'); });
+  });
+
+  // Live event counter on the pipeline card
+  const eps = document.getElementById('eps');
+  let v = 5000;
+  if (!reduce) setInterval(() => { v = Math.max(4700, Math.min(5300, v + Math.round((Math.random() - .5) * 180))); eps.textContent = v.toLocaleString(); }, 700);
+
+  // Sections settle in as they scroll into view; they are already visible before that
+  const later = document.querySelectorAll('.later');
+  if ('IntersectionObserver' in window && !reduce) {
+    const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { rootMargin: '0px 0px -8% 0px' });
+    later.forEach(el => io.observe(el));
+  } else later.forEach(el => el.classList.add('in'));
+
+  // Timeline line fills as you scroll past it
+  const tl = document.getElementById('timeline');
+  const fill = tl.querySelector('.fill');
+  const bimg = document.querySelector('.banner-img');
+  function onScroll() {
+    const r = tl.getBoundingClientRect();
+    const p = Math.max(0, Math.min(1, (innerHeight * .7 - r.top) / r.height));
+    fill.style.setProperty('--p', reduce ? 1 : p.toFixed(3));
+    if (!reduce) bimg.style.transform = 'translateY(' + (Math.min(scrollY, 320) * 0.3).toFixed(1) + 'px)';
+    const ids = ['work', 'projects', 'life', 'contact'];
+    let on = null;
+    ids.forEach(id => { const s = document.getElementById(id); if (s.getBoundingClientRect().top < innerHeight * .4) on = id; });
+    document.querySelectorAll('nav a[href^="#"]').forEach(a => a.classList.toggle('on', a.getAttribute('href') === '#' + on));
+  }
+  addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+</script>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // Miaomiao peeks in once you start exploring
+  const peek = document.getElementById('peek'), say = document.getElementById('peekSay');
+  const lines = ['mrrp?', 'pet me?', 'hire my human!', 'she debugs, I supervise', 'is it dinner yet?'];
+  let shown = false, n = 0, hideT;
+  function show() { if (!shown) { shown = true; peek.classList.add('show'); } }
+  addEventListener('scroll', () => { if (scrollY > 500) show(); }, { passive: true });
+  setTimeout(show, 7000);
+  // Miaomiao's voice: real cat sounds, loaded the first time someone clicks her
+  let snd;
+  const meows = ['cat-meow1.mp3', 'cat-meow2.mp3'];
+  function voice(kind) {
+    snd = snd || { trill: new Audio('cat-mrrp.mp3'), purr: new Audio('cat-purr.mp3'), meow: meows.map(s => new Audio(s)) };
+    Object.values(snd).flat().forEach(a => { a.pause(); a.currentTime = 0; });
+    const a = kind === 'meow' ? snd.meow[n % 2] : snd[kind];
+    a.volume = kind === 'purr' ? 0.9 : 0.7;
+    a.play().catch(() => {});
+  }
+  peek.addEventListener('click', () => {
+    const line = lines[n++ % lines.length];
+    say.textContent = line;
+    voice(line === 'mrrp?' ? 'trill' : line === 'pet me?' ? 'purr' : 'meow');
+    peek.classList.remove('hop'); void peek.offsetWidth; peek.classList.add('hop', 'talk');
+    clearTimeout(hideT); hideT = setTimeout(() => peek.classList.remove('talk'), 2200);
+  });
+
+  // San's wheel spins faster while you scroll
+  const spokes = document.getElementById('spokes'), san = document.getElementById('san'), cap = document.getElementById('wheelCap');
+  let ang = 0, vel = 0, lastY = scrollY, t = 0, capT;
+  addEventListener('scroll', () => { vel = Math.min(30, vel + Math.abs(scrollY - lastY) * 0.03); lastY = scrollY; }, { passive: true });
+  document.getElementById('wheel').addEventListener('click', () => {
+    vel = 30; cap.textContent = 'Wheee! San is running at full speed.';
+    clearTimeout(capT); capT = setTimeout(() => cap.textContent = 'San powers this site. Scroll to help him run.', 2600);
+  });
+  if (reduce) return;
+  function loop() {
+    t += 1; ang = (ang + 1.2 + vel) % 360; vel *= 0.95;
+    spokes.style.transform = 'rotate(' + ang + 'deg)';
+    san.style.transform = 'translateX(-50%) translateY(' + (Math.sin(t * (0.15 + vel * 0.02)) * (1.5 + vel * 0.08)).toFixed(2) + 'px)';
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+})();
+</script>
+<script>
+// Retro TV: static plays while it's in view; tapping switches it on
+(() => {
+  const tv = document.getElementById('pitch-video'); if (!tv) return;
+  const cv = tv.querySelector('canvas'), cx = cv.getContext('2d'), img = cx.createImageData(cv.width, cv.height);
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let seen = false, n = 0;
+  const paint = () => { const d = img.data; for (let k = 0; k < d.length; k += 4) { const v = Math.random() * 255 | 0; d[k] = v; d[k + 1] = v * .95; d[k + 2] = v * .8; d[k + 3] = 255; } cx.putImageData(img, 0, 0); };
+  paint();
+  new IntersectionObserver(es => { seen = es[0].isIntersecting; }).observe(tv);
+  const loop = () => { if (seen && !tv.classList.contains('is-on') && n++ % 3 === 0) paint(); requestAnimationFrame(loop); };
+  if (!still) loop();
+  // The video lives in one fixed player: it sits exactly on the TV screen while the TV is in view,
+  // and glides to the bottom-left corner when you scroll away, so it never stops you from reading
+  const vp = document.createElement('div'); vp.className = 'vplayer'; vp.setAttribute('aria-label', 'Elevator pitch video');
+  vp.innerHTML = '<span class="tape" aria-hidden="true"></span><video src="pitch.mp4" playsinline preload="metadata"></video>' +
+    '<span class="bar" aria-hidden="true"></span><button class="vbtn vup" type="button" aria-label="Back to the TV">↑</button><button class="vbtn vx" type="button" aria-label="Close video">✕</button>';
+  document.body.appendChild(vp);
+  const video = vp.querySelector('video'), bar = vp.querySelector('.bar'), scr = tv.querySelector('.screen');
+  let on = false, floating = false, animT;
+  const corner = () => { const w = Math.min(280, innerWidth * .46); return { l: 20, t: innerHeight - w * 9 / 16 - 24, w, h: w * 9 / 16 }; };
+  const put = r => { vp.style.left = r.l + 'px'; vp.style.top = r.t + 'px'; vp.style.width = r.w + 'px'; vp.style.height = r.h + 'px'; };
+  const screenRect = () => { const r = scr.getBoundingClientRect(); return { l: r.left, t: r.top, w: r.width, h: r.height, vis: r.bottom > 40 && r.top < innerHeight - 40 }; };
+  function glide(to) { vp.classList.add('anim'); put(to); clearTimeout(animT); animT = setTimeout(() => vp.classList.remove('anim'), 470); }
+  function track() {
+    if (!on) return;
+    const r = screenRect();
+    if (r.vis && floating) { floating = false; vp.classList.remove('float'); glide(r); }
+    else if (!r.vis && !floating) { floating = true; vp.classList.add('float'); glide(corner()); }
+    else if (!floating && !vp.classList.contains('anim')) put(r);
+    if (video.duration) bar.style.width = (video.currentTime / video.duration * 100) + '%';
+    requestAnimationFrame(track);
+  }
+  function start() {
+    on = true; floating = false; tv.classList.add('is-on'); put(screenRect());
+    setTimeout(() => { vp.classList.add('show'); video.play().catch(() => vp.classList.add('paused')); }, still ? 0 : 350);
+    requestAnimationFrame(track);
+  }
+  function stop() { on = false; video.pause(); vp.classList.remove('show', 'float', 'paused'); tv.classList.remove('is-on'); }
+  tv.addEventListener('click', () => on ? (video.paused ? video.play() : video.pause()) : start());
+  video.addEventListener('click', () => video.paused ? video.play() : video.pause());
+  video.addEventListener('pause', () => vp.classList.add('paused')); video.addEventListener('play', () => vp.classList.remove('paused'));
+  video.addEventListener('ended', () => { video.currentTime = 0; stop(); });
+  vp.querySelector('.vx').addEventListener('click', stop);
+  vp.querySelector('.vup').addEventListener('click', () => scr.scrollIntoView({ behavior: still ? 'auto' : 'smooth', block: 'center' }));
+  addEventListener('resize', () => { if (on && floating) put(corner()); });
+})();
+</script>
+</body>
+</html>
